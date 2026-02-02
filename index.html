@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TCSS 491 Mini-Game Prototype</title>
+  <title>Coin Chase</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Mini-Game Prototype</h1>
+    <h1>Coin Chase</h1>
+
     <p class="sub">
       Use <strong>Arrow Keys or WASD</strong> to move. Collect <strong>5 coins</strong> to win.
       Avoid the <strong>enemy</strong>. Press <strong>R</strong> to restart.
@@ -21,16 +22,16 @@
         <div class="badge coin">Coin</div>
 
         <p class="sub" style="margin-top:10px;">
-          Goal: collect 5 coins.<br/>
-          Lose: touch the enemy.<br/>
-          Restart: press R.
+          <strong>Goal:</strong> collect 5 coins.<br/>
+          <strong>Lose:</strong> touch the red enemy.<br/>
+          <strong>Restart:</strong> press R anytime.
         </p>
       </div>
 
       <canvas id="gameCanvas" width="500" height="400"></canvas>
     </div>
 
-    <div class="footer">TCSS 491 • Mini-Game Prototype • Merra Migora</div>
+    <div class="footer">TCSS 491 • Coin Chase • Merra Migora</div>
   </div>
 
   <script src="main.js"></script>
