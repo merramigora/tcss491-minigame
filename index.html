@@ -2,20 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TCSS 491 Mini-Game Prototype</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Mini-Game Prototype</h1>
+  <div class="container">
+    <h1>Mini-Game Prototype</h1>
+    <p class="sub">
+      Use <strong>Arrow Keys or WASD</strong> to move. Collect <strong>5 coins</strong> to win.
+      Avoid the <strong>enemy</strong>. Press <strong>R</strong> to restart.
+    </p>
 
-  <p>
-    Use <strong>Arrow Keys or WASD</strong> to move the player.<br>
-    Collect <strong>5 gold coins</strong> to win.<br>
-    Avoid the <strong>red enemy</strong>.<br>
-    Press <strong>R</strong> to restart the game.
-  </p>
+    <div class="row">
+      <div class="panel">
+        <div class="badge player">Player</div>
+        <div class="badge enemy">Enemy</div>
+        <div class="badge coin">Coin</div>
 
-  <canvas id="gameCanvas" width="500" height="400"></canvas>
+        <p class="sub" style="margin-top:10px;">
+          Goal: collect 5 coins.<br/>
+          Lose: touch the enemy.<br/>
+          Restart: press R.
+        </p>
+      </div>
+
+      <canvas id="gameCanvas" width="500" height="400"></canvas>
+    </div>
+
+    <div class="footer">TCSS 491 • Mini-Game Prototype • Merra Migora</div>
+  </div>
 
   <script src="main.js"></script>
 </body>
