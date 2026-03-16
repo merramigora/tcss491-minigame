@@ -1,38 +1,30 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// ---------- GAME STATE ----------
-let gameState = "start"; // start | playing | won | lost
+let gameState = "start";
 let score = 0;
 const WIN_SCORE = 5;
 
-// ---------- TIMER FEATURE ----------
-let timeLeft = 30; 
-let lastTimeUpdate = Date.now();
-
-// ---------- INPUT ----------
 const keys = Object.create(null);
 
 window.addEventListener("keydown", (e) => {
-  if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key)) {
-    e.preventDefault();
-  }
 
   keys[e.key] = true;
 
   if (e.key === "Enter" && gameState === "start") {
     gameState = "playing";
-    lastTimeUpdate = Date.now();
   }
 
-  if (e.key === "r" || e.key === "R") restartGame();
+  if (e.key === "r" || e.key === "R") {
+    restartGame();
+  }
+
 });
 
 window.addEventListener("keyup", (e) => {
   keys[e.key] = false;
 });
 
-// ---------- OBJECTS ----------
 const player = {
   x: 220,
   y: 180,
@@ -52,7 +44,6 @@ const enemy = {
 
 let coin = spawnCoin();
 
-// ---------- HELPERS ----------
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -67,18 +58,21 @@ function rectsOverlap(a, b) {
 }
 
 function spawnCoin() {
+
   const size = 16;
+
   return {
-    x: randInt(20, canvas.width - 20 - size),
-    y: randInt(20, canvas.height - 20 - size),
+    x: randInt(20, canvas.width - 40),
+    y: randInt(20, canvas.height - 40),
     w: size,
     h: size
   };
+
 }
 
 function restartGame() {
+
   score = 0;
-  timeLeft = 30;
   gameState = "start";
 
   player.x = 220;
@@ -86,64 +80,44 @@ function restartGame() {
 
   enemy.x = 60;
   enemy.y = 60;
+
   enemy.vx = 3;
   enemy.vy = 2;
 
   coin = spawnCoin();
-}
 
-// ---------- GAME LOOP ----------
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
 }
 
 function update() {
 
   if (gameState !== "playing") return;
 
-  // ---------- TIMER ----------
-  if (Date.now() - lastTimeUpdate >= 1000) {
-    timeLeft--;
-    lastTimeUpdate = Date.now();
-
-    if (timeLeft <= 0) {
-      gameState = "lost";
-    }
-  }
-
-  let dx = 0, dy = 0;
+  let dx = 0;
+  let dy = 0;
 
   if (keys["ArrowUp"] || keys["w"] || keys["W"]) dy -= 1;
   if (keys["ArrowDown"] || keys["s"] || keys["S"]) dy += 1;
   if (keys["ArrowLeft"] || keys["a"] || keys["A"]) dx -= 1;
   if (keys["ArrowRight"] || keys["d"] || keys["D"]) dx += 1;
 
-  // ---------- DASH FEATURE ----------
-  let currentSpeed = player.speed;
-  if (keys[" "]) currentSpeed = 8;
-
-  player.x += dx * currentSpeed;
-  player.y += dy * currentSpeed;
+  player.x += dx * player.speed;
+  player.y += dy * player.speed;
 
   player.x = Math.max(0, Math.min(canvas.width - player.w, player.x));
   player.y = Math.max(0, Math.min(canvas.height - player.h, player.y));
 
-  // Enemy movement
   enemy.x += enemy.vx;
   enemy.y += enemy.vy;
 
   if (enemy.x <= 0 || enemy.x + enemy.w >= canvas.width) enemy.vx *= -1;
   if (enemy.y <= 0 || enemy.y + enemy.h >= canvas.height) enemy.vy *= -1;
 
-  // Lose condition
   if (rectsOverlap(player, enemy)) {
     gameState = "lost";
   }
 
-  // Coin collision
   if (rectsOverlap(player, coin)) {
+
     score++;
     coin = spawnCoin();
 
@@ -153,44 +127,40 @@ function update() {
     if (score >= WIN_SCORE) {
       gameState = "won";
     }
+
   }
+
 }
 
-// ---------- DRAW ----------
 function draw() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // HUD
   ctx.font = "16px Arial";
   ctx.fillStyle = "#111";
-  ctx.fillText(`Score: ${score} / ${WIN_SCORE}`, 10, 22);
-  ctx.fillText(`Time: ${timeLeft}`, 140, 22);
+  ctx.fillText(`Score: ${score} / ${WIN_SCORE}`, 10, 20);
 
-  // Coin
-  ctx.fillStyle = "#f4c542";
+  ctx.fillStyle = "gold";
   ctx.fillRect(coin.x, coin.y, coin.w, coin.h);
 
-  // Enemy
-  ctx.fillStyle = "#e53935";
+  ctx.fillStyle = "red";
   ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
 
-  // Player
-  ctx.fillStyle = "#4CAF50";
+  ctx.fillStyle = "green";
   ctx.fillRect(player.x, player.y, player.w, player.h);
 
-  // Screens
   if (gameState === "start") {
     overlayMessage("COIN CHASE\nPress ENTER to Start");
   }
 
   if (gameState === "won") {
-    overlayMessage("YOU WIN! 🎉 Press R to Restart");
+    overlayMessage("YOU WIN!\nPress R to Restart");
   }
 
   if (gameState === "lost") {
-    overlayMessage("GAME OVER 💀 Press R to Restart");
+    overlayMessage("GAME OVER\nPress R to Restart");
   }
+
 }
 
 function overlayMessage(msg) {
@@ -203,12 +173,21 @@ function overlayMessage(msg) {
   ctx.textAlign = "center";
 
   const lines = msg.split("\n");
+
   lines.forEach((line, i) => {
     ctx.fillText(line, canvas.width / 2, canvas.height / 2 + i * 30);
   });
 
   ctx.textAlign = "left";
+
 }
 
-// Start
+function gameLoop() {
+
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+
+}
+
 gameLoop();
